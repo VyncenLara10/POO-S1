@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
-import { sql } from "@/lib/db";
+import { PostRepository } from "@/lib/repositories/PostRepository";
+import { PostService } from "@/lib/services/PostService";
 
 export async function POST(request: NextRequest) {
   const data = await request.json();
@@ -8,13 +9,21 @@ export async function POST(request: NextRequest) {
   if (!title || !description || !author) {
     return NextResponse.json({ error: "Missing fields" }, { status: 422 });
   }
+  if (typeof title !== "string" || title.length < 3) {
+    return NextResponse.json({ error: "Invalid title" }, { status: 422 });
+  }
+  if (typeof description !== "string" || description.length < 10) {
+    return NextResponse.json({ error: "Invalid description" }, { status: 422 });
+  }
+  if (typeof author !== "string" || author.length < 3) {
+    return NextResponse.json({ error: "Invalid author" }, { status: 422 });
+  }
 
-  await sql
-  `INSERT INTO "Posts" (title, description, author)
-    VALUES (${title}, ${description}, ${author})`;
+  const service = new PostService(new PostRepository());
+  const saved = await service.create(title, description, author);
 
   return NextResponse.json({
     message: "Post saved successfully",
-    data: { title, description, author }
+    data: saved,
   });
 }
