@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
-import { PostRepository } from "@/lib/repositories/PostRepository";
 import { PostService } from "@/lib/services/PostService";
+import { PostRepository } from "@/lib/repositories/PostRepository";
 
 export async function POST(request: NextRequest) {
   try {
