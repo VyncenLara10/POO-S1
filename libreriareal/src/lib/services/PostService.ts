@@ -1,12 +1,14 @@
-import { IPostRepository } from "@/lib/repositories/IPostRepository";
-import { Post } from "@/lib/value-objects/Post";
+import { sql } from "@/lib/db";
 
 export class PostService {
-  constructor(private readonly repo: IPostRepository) {}
+  async save(title: string, description: string, author: string) {
+    return await sql`
+      INSERT INTO posts (title, description, author)
+      VALUES (${title}, ${description}, ${author})
+    `;
+  }
 
-  async create(title: string, description: string, author: string) {
-    const post = new Post(title, description, author);
-    await this.repo.save(post);
-    return post;
+  async getAll() {
+    return await sql`SELECT * FROM posts`;
   }
 }
